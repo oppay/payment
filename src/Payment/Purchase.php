@@ -18,41 +18,55 @@ class Purchase
 	{
 		$this->amount  = (int)$amount;
 		$this->orderId = $orderId;
+
+		$this->gateway = new Gateway\Saman\Saman([
+			'terminalId' => 21056352,
+			'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
+			'amount' => $this->amount,
+			'receiptId' => $this->orderId,
+		]);
 	}
 
 
 
 	public function send()
 	{
-		$this->gateway->sendRequest($this->amount, $this->orderId);
+		$this->gateway->send();
 	}
 
 
 
 	public function isReady()
 	{
-		# code...
+		return $this->gateway->isReady();
 	}
 
 
 
 	public function getData()
 	{
-		# code...
+		return $this->gateway->getRequestData();
+	}
+
+
+
+	public function getToken()
+	{
+		return $this->gateway->getToken();
 	}
 
 
 
 	public function redirect()
 	{
-		# code...
+		return $this->gateway->redirect();
 	}
 
 
 
 	public function getError()
 	{
-		# code...
+		return $this->gateway->getRequestError();
 	}
 
 

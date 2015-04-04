@@ -25,7 +25,10 @@ class Saman extends Gateway implements GatewayInterface
 	protected $receiptId;
 
 
-	protected $client;
+	protected $token;
+
+
+	//protected $client;
 
 
 	protected $requestData;
@@ -37,20 +40,11 @@ class Saman extends Gateway implements GatewayInterface
 
 	public function __construct(array $params)
 	{
-
-		$this->terminalId   = $params['terminalId'];
-		$this->callbackUrl  = $params['callbackUrl'];
-	}
-
-
-
-	public function purchase($amount, $receiptId, $token = null)
-	{
-		$this->amount    = (int)$amount;
-		$this->receiptId = $receiptId;
-		$this->token     = $token;
-
-		return $this;
+		$this->terminalId  = $params['terminalId'];
+		$this->callbackUrl = $params['callbackUrl'];
+		
+		$this->amount      = (int)$params['amount'];
+		$this->receiptId   = $params['receiptId'];
 	}
 
 
@@ -92,6 +86,13 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
+	public function isReady()
+	{
+		return $this->requestError === null;
+	}
+
+
+
 	public function getRequestData()
 	{
 		return $this->requestData;
@@ -102,6 +103,13 @@ class Saman extends Gateway implements GatewayInterface
 	public function getRequestError()
 	{
 		return $this->requestError;
+	}
+
+
+
+	public function getToken()
+	{
+		return $this->token;
 	}
 
 

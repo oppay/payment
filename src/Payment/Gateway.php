@@ -50,7 +50,7 @@ class Gateway
 	{
 		if ($name === 'client')
 		{
-			$this->client = new SoapClient($this->wsdlUrl, ['exceptions' => false, 'encoding' => 'UTF-8']);
+			$this->client = new \SoapClient($this->wsdlUrl, ['exceptions' => false, 'encoding' => 'UTF-8']);
 		}
 
 		return $this->client;

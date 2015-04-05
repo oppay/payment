@@ -25,6 +25,15 @@ class Purchase
 			'amount' => $this->amount,
 			'receiptId' => $this->orderId,
 		]);
+
+		/*$this->gateway = new Gateway\Mellat\Mellat([
+			'terminalId' => 802802,
+			'userName' => 'rahahost',
+			'userPassword' => 'ra94ha',
+			'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
+			'amount' => $this->amount,
+			'receiptId' => $this->orderId,
+		]);*/
 	}
 
 

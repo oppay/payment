@@ -25,7 +25,10 @@ class Mellat extends Gateway implements GatewayInterface
 	protected $receiptId;
 
 
-	protected $client;
+	protected $token;
+
+
+	//protected $client;
 
 
 	protected $requestData;
@@ -35,12 +38,15 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function __construct(array $config)
+	public function __construct(array $params)
 	{
-		$this->terminalId   = $config['terminalId'];
-		$this->userName     = $config['userName'];
-		$this->userPassword = $config['userPassword'];
-		$this->callbackUrl  = $config['callbackUrl'];
+		$this->terminalId   = $params['terminalId'];
+		$this->userName     = $params['userName'];
+		$this->userPassword = $params['userPassword'];
+		$this->callbackUrl  = $params['callbackUrl'];
+
+		$this->amount      = (int)$params['amount'];
+		$this->receiptId   = $params['receiptId'];
 	}
 
 
@@ -97,6 +103,13 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
+	public function isReady()
+	{
+		return $this->requestError === null;
+	}
+
+
+
 	public function getRequestData()
 	{
 		return $this->requestData;
@@ -111,9 +124,9 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function isReady()
+	public function getToken()
 	{
-		return $this->requestError === null;
+		return $this->token;
 	}
 
 

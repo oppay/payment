@@ -24,5 +24,5 @@ interface GatewayInterface
 
 
 
-	public function verify();
+	//public function verify();
 }

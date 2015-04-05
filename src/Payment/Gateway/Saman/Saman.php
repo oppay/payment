@@ -55,7 +55,7 @@ class Saman extends Gateway implements GatewayInterface
 			'TermID'          => $this->terminalId,
 			'ResNum'          => $this->receiptId,
 			'TotalAmount'     => $this->amount,
-			/*
+			
 			'SegAmount1'      => null,
 			'SegAmount2'      => null,
 			'SegAmount3'      => null,
@@ -65,7 +65,6 @@ class Saman extends Gateway implements GatewayInterface
 			'AdditionalData1' => null,
 			'AdditionalData1' => null,
 			'wage'            => null,
-			*/
 		];
 
 		$result = $this->client->__soapCall('RequestToken', $params);
@@ -114,10 +113,6 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-
-
-
-
 	public function redirect()
 	{
 		$this->redirectByForm($this->paymentUrl, ['Token' => $this->token, 'RedirectURL' => $this->callbackUrl]);
@@ -125,7 +120,7 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	public function capture()
+	/*public function capture()
 	{
 		// redirect to RedirectURL
 		// $_POST['State']
@@ -201,5 +196,5 @@ class Saman extends Gateway implements GatewayInterface
 			}
 		}
 		return true;
-	}
+	}*/
 }

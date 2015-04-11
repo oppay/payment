@@ -14,9 +14,14 @@ $order = $stmt = $db->prepare("INSERT INTO purchase SET gateway = 'Saman', amoun
 $stmt->execute();
 $orderId = $db->lastInsertId(); 
 
-//$gateway = Payment\Payment::create('Saman');
 
-$purchase = new Payment\Purchase(100, $orderId);
+$payment = Payment\Payment::create('Saman', [
+	'terminalId'  => 21056352,
+	'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
+]);
+
+
+$purchase = $payment->purchase(100, $orderId);
 
 $purchase->send();
 

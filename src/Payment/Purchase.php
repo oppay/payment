@@ -19,21 +19,44 @@ class Purchase
 		$this->amount  = (int)$amount;
 		$this->orderId = $orderId;
 
-		$this->gateway = new Gateway\Saman\Saman([
-			'terminalId' => 21056352,
+		/*$this->gateway = new Gateway\Saman\Saman([
+			'terminalId'  => 21056352,
 			'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
-			'amount' => $this->amount,
-			'receiptId' => $this->orderId,
-		]);
+			'amount'      => $this->amount,
+			'receiptId'   => $this->orderId,
+		]);*/
 
 		/*$this->gateway = new Gateway\Mellat\Mellat([
-			'terminalId' => 802802,
-			'userName' => 'rahahost',
+			'terminalId'   => 802802,
+			'userName'     => 'rahahost',
 			'userPassword' => 'ra94ha',
-			'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
-			'amount' => $this->amount,
-			'receiptId' => $this->orderId,
+			'callbackUrl'  => 'http://2.182.224.73/Payment/back.php',
+			'amount'       => $this->amount,
+			'receiptId'    => $this->orderId,
 		]);*/
+	}
+
+
+
+	public function setGateway(Gateway $gateway)
+	{
+		$this->gateway = $gateway;
+
+		return $this;
+	}
+
+
+
+	public function setAmount($amount)
+	{
+		$this->amount = (int)$amount;
+	}
+	
+
+
+	public function setOrderId($orderId)
+	{
+		$this->orderId = $orderId;
 	}
 
 
@@ -41,6 +64,8 @@ class Purchase
 	public function send()
 	{
 		$this->gateway->send();
+
+		return $this;
 	}
 
 

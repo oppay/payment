@@ -37,14 +37,51 @@ class Saman extends Gateway implements GatewayInterface
 	protected $requestError;
 
 
+	protected $errors = [
+		"-1"  => "خطا در پردازش اطلاعات ارسالی",
+		"-3"  => "ورودی ها حاوی کاراکترهای غیر مجاز می باشند",
+		"-4"  => "کلمه عبور یا کد فروشنده اشتباه است",
+		"-6"  => "سند قبلا برگشت کامل یافته است",
+		"-7"  => "رسید دیجیتال تهی است",
+		"-8"  => "طول ورودی ها بیشتر از حد مجاز است",
+		"-9"  => "وجود کاراکترهای غیر مجاز در مبلغ برگشتی",
+		"-10" => "رسید دیجیتال حاوی کاراکترهای غیرمجاز است",
+		"-11" => "طول ورودی ها کمتر از حد مجاز است",
+		"-12" => "مبلغ برگشتی منفی است",
+		"-13" => "",
+		"-14" => "چنین تراکنشی تعریف نشده",
+		"-15" => "مبلغ برگشتی به صورت اعشاری داده شده",
+		"-16" => "خطای داخلی سیستم",
+		"-17" => "برگشت زدن جزئی تراکنش مجاز نیست",
+		"-18" => "آدرس IP فروشنده نامعتبر است",
+	];
+
+
+
+	protected $states = [
+		"OK"                                   => "",
+		"Canceled By User"                     => "خطا در پردازش اطلاعات ارسالی",
+		"Invalid Amount"                       => "",
+		"Invalid Transaction"                  => "",
+		"Invalid Card Number"                  => "",
+		"No Such Issuer"                       => "",
+		"Expired Card Pick Up"                 => "",
+		"Allowable PIN Tries Exceeded Pick Up" => "",
+		"Incorrect PIN"                        => "",
+		"Exceeds Withdrawal Amount Limit"      => "",
+		"Transaction Cannot Be Completed"      => "",
+		"Response Received Too Late"           => "",
+		"Suspected Fraud Pick Up"              => "",
+		"No Sufficient Funds"                  => "",
+		"Issuer Down Slm"                      => "",
+	];
+
+
 
 	public function __construct(array $params)
 	{
 		$this->terminalId  = $params['terminalId'];
 		$this->callbackUrl = $params['callbackUrl'];
-		
-		//$this->amount      = (int)$params['amount'];
-		//$this->receiptId   = $params['receiptId'];
 	}
 
 
@@ -64,7 +101,8 @@ class Saman extends Gateway implements GatewayInterface
 			'SegAmount6'      => null,
 			'AdditionalData1' => null,
 			'AdditionalData1' => null,
-			'wage'            => null,*/
+			'wage'            => null,
+			*/
 		];
 
 		$result = $this->client->__soapCall('RequestToken', $params);
@@ -85,13 +123,6 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	public function isReady()
-	{
-		return $this->requestError === null;
-	}
-
-
-
 	public function getRequestData()
 	{
 		return $this->requestData;
@@ -101,7 +132,12 @@ class Saman extends Gateway implements GatewayInterface
 
 	public function getRequestError()
 	{
-		return $this->requestError;
+		if (isset($this->errors[$this->requestError]))
+		{
+			return ['code' => $this->requestError, 'message' => $this->errors[$this->requestError]];
+		}
+
+		return ['code' => null, 'message' => null];
 	}
 
 

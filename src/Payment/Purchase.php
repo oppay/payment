@@ -14,65 +14,32 @@ class Purchase
 
 
 
-	public function __construct($amount, $orderId)
+	public function __construct($amount, $orderId, Gateway $gateway)
 	{
 		$this->amount  = (int)$amount;
 		$this->orderId = $orderId;
-
-		/*$this->gateway = new Gateway\Saman\Saman([
-			'terminalId'  => 21056352,
-			'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
-			'amount'      => $this->amount,
-			'receiptId'   => $this->orderId,
-		]);*/
-
-		/*$this->gateway = new Gateway\Mellat\Mellat([
-			'terminalId'   => 802802,
-			'userName'     => 'rahahost',
-			'userPassword' => 'ra94ha',
-			'callbackUrl'  => 'http://2.182.224.73/Payment/back.php',
-			'amount'       => $this->amount,
-			'receiptId'    => $this->orderId,
-		]);*/
-	}
-
-
-
-	public function setGateway(Gateway $gateway)
-	{
 		$this->gateway = $gateway;
-
-		return $this;
-	}
-
-
-
-	public function setAmount($amount)
-	{
-		$this->amount = (int)$amount;
-	}
-	
-
-
-	public function setOrderId($orderId)
-	{
-		$this->orderId = $orderId;
 	}
 
 
 
 	public function send()
 	{
-		$this->gateway->send();
-
-		return $this;
+		return $this->gateway->send();
 	}
 
 
 
-	public function isReady()
+	public function getAmount()
 	{
-		return $this->gateway->isReady();
+		return $this->amount;
+	}
+	
+
+
+	public function getOrderId()
+	{
+		return $this->orderId;
 	}
 
 
@@ -105,29 +72,15 @@ class Purchase
 
 
 
-	/*public function send()
+	public function getErrorCode()
 	{
-		# code...
+		return $this->gateway->getRequestError()['code'];
 	}
 
 
 
-	public function send()
+	public function getErrorMessage()
 	{
-		# code...
+		return $this->gateway->getRequestError()['message'];
 	}
-
-
-
-	public function send()
-	{
-		# code...
-	}
-
-
-
-	public function send()
-	{
-		# code...
-	}*/
 }

@@ -1,6 +1,6 @@
 <?php
 
-include('src/Payment/Payment.php');
+include('src/Payment/PaymentFactory.php');
 include('src/Payment/Gateway.php');
 include('src/Payment/GatewayInterface.php');
 include('src/Payment/Gateway/Saman/Saman.php');
@@ -10,22 +10,31 @@ include('src/Payment/Purchase.php');
 
 $db = new PDO('mysql:host=127.0.0.1;port=3306;dbname=payment', 'root', '', array( PDO::ATTR_PERSISTENT => false));
 
-$order = $stmt = $db->prepare("INSERT INTO purchase SET gateway = 'Saman', amount = 100");
+$gatewayName = 'Saman';
+
+$order = $stmt = $db->prepare("INSERT INTO purchase SET gateway = '$gatewayName', amount = 100");
 $stmt->execute();
 $orderId = $db->lastInsertId(); 
 
 
-$payment = Payment\Payment::create('Saman', [
+$gateway = Payment\PaymentFactory::create('Saman', [
 	'terminalId'  => 21056352,
 	'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
 ]);
 
+/*
+$gateway = Payment\PaymentFactory::create($gatewayName, [
+	'terminalId'  => 802802,
+	'userName' => 'rahahost',
+	"userPassword"   => 'ra94ha',
+	'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
+]);*/
 
-$purchase = $payment->purchase(100, $orderId);
 
-$purchase->send();
 
-if ($purchase->isReady())
+$purchase = $gateway->purchase(100, $orderId);
+
+if ($purchase->send())
 {
 	$token = $purchase->getToken();
 
@@ -41,9 +50,9 @@ else
 	$error = $purchase->getError();
 
 	//
-	$order = $stmt = $db->prepare("UPDATE purchase SET requestCode = '$error' WHERE id = $orderId");
+	$order = $stmt = $db->prepare("UPDATE purchase SET requestCode = '$error[code]' WHERE id = $orderId");
 	$stmt->execute();
 	//
 
-	var_dump($error);
+	print_r($error);
 }

@@ -37,6 +37,56 @@ class Mellat extends Gateway implements GatewayInterface
 	protected $requestError;
 
 
+	protected $errors = [
+		"error"   => "خطای ناشناخته!",
+		"0"   => "",
+		"11"  => "",
+		"12"  => "",
+		"13"  => "",
+		"14"  => "",
+		"15"  => "",
+		"16"  => "",
+		"17"  => "",
+		"18"  => "",
+		"19"  => "",
+		"111" => "",
+		"112" => "",
+		"113" => "",
+		"114" => "",
+		"21"  => "",
+		"23"  => "",
+		"24"  => "",
+		"25"  => "",
+		"31"  => "",
+		"32"  => "",
+		"33"  => "",
+		"34"  => "",
+		"35"  => "",
+		"41"  => "",
+		"42"  => "",
+		"43"  => "",
+		"44"  => "",
+		"45"  => "",
+		"46"  => "",
+		"47"  => "",
+		"48"  => "",
+		"49"  => "",
+		"412" => "",
+		"413" => "",
+		"414" => "",
+		"415" => "",
+		"416" => "",
+		"417" => "",
+		"418" => "",
+		"419" => "",
+		"421" => "",
+		"51"  => "",
+		"54"  => "",
+		"55"  => "",
+		"61"  => "",
+	];
+
+
 
 	public function __construct(array $params)
 	{
@@ -44,9 +94,6 @@ class Mellat extends Gateway implements GatewayInterface
 		$this->userName     = $params['userName'];
 		$this->userPassword = $params['userPassword'];
 		$this->callbackUrl  = $params['callbackUrl'];
-
-		$this->amount      = (int)$params['amount'];
-		$this->receiptId   = $params['receiptId'];
 	}
 
 
@@ -80,7 +127,7 @@ class Mellat extends Gateway implements GatewayInterface
 
 		if ($result instanceof SoapFault)
 		{
-			$this->requestError = $result;
+			$this->requestError = 'error';
 
 			return false;
 		}
@@ -119,7 +166,12 @@ class Mellat extends Gateway implements GatewayInterface
 
 	public function getRequestError()
 	{
-		return $this->requestError;
+		if (isset($this->errors[$this->requestError]))
+		{
+			return ['code' => $this->requestError, 'message' => $this->errors[$this->requestError]];
+		}
+
+		return ['code' => null, 'message' => null];
 	}
 
 

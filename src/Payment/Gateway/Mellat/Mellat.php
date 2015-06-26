@@ -2,8 +2,8 @@
 
 namespace Payment\Gateway\Mellat;
 
-use Payment\Gateway;
-use Payment\GatewayInterface;
+use Payment\Gateway\Gateway;
+use Payment\Gateway\GatewayInterface;
 
 use SoapClient;
 use SoapFault;

@@ -2,7 +2,7 @@
 
 namespace Payment;
 
-use Payment\GatewayInterface;
+use Payment\Gateway\GatewayInterface;
 use Payment\Gateway\Saman\Saman;
 use Payment\Gateway\Mellat\Mellat;
 

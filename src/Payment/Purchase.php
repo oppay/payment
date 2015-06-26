@@ -2,6 +2,8 @@
 
 namespace Payment;
 
+use Payment\Gateway\Gateway;
+
 class Purchase
 {
 	protected $amount;

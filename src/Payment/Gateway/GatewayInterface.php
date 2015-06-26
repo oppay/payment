@@ -1,6 +1,6 @@
 <?php
 
-namespace Payment;
+namespace Payment\Gateway;
 
 interface GatewayInterface
 {

@@ -2,41 +2,14 @@
 
 namespace Payment\Gateway\Saman;
 
-use Payment\Gateway;
-use Payment\GatewayInterface;
+use Payment\Gateway\Gateway;
+use Payment\Gateway\GatewayInterface;
 
 use SoapClient;
 use SoapFault;
 
 class Saman extends Gateway implements GatewayInterface
 {
-	protected $wsdlUrl = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?wsdl';
-
-
-	protected $paymentUrl = 'https://sep.shaparak.ir/Payment.aspx';
-
-
-	protected $terminalId;
-
-
-	protected $amount;
-
-
-	protected $receiptId;
-
-
-	protected $token;
-
-
-	//protected $client;
-
-
-	protected $requestData;
-
-
-	protected $requestError;
-
-
 	protected $errors =
 	[
 		"-1"  => "خطا در پردازش اطلاعات ارسالی",
@@ -56,7 +29,6 @@ class Saman extends Gateway implements GatewayInterface
 		"-17" => "برگشت زدن جزئی تراکنش مجاز نیست",
 		"-18" => "آدرس IP فروشنده نامعتبر است",
 	];
-
 
 
 	protected $states =
@@ -84,6 +56,9 @@ class Saman extends Gateway implements GatewayInterface
 	{
 		$this->terminalId  = $params['terminalId'];
 		$this->callbackUrl = $params['callbackUrl'];
+
+		$this->wsdlUrl    = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?wsdl';
+		$this->paymentUrl = 'https://sep.shaparak.ir/Payment.aspx';
 	}
 
 
@@ -125,13 +100,6 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	public function getRequestData()
-	{
-		return $this->requestData;
-	}
-
-
-
 	public function getRequestError()
 	{
 		if (isset($this->errors[$this->requestError]))
@@ -140,13 +108,6 @@ class Saman extends Gateway implements GatewayInterface
 		}
 
 		return ['code' => null, 'message' => null];
-	}
-
-
-
-	public function getToken()
-	{
-		return $this->token;
 	}
 
 

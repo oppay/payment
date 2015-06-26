@@ -1,9 +1,31 @@
 <?php
 
-namespace Payment;
+namespace Payment\Gateway;
 
 class Gateway
 {
+	protected $wsdlUrl;
+
+
+	protected $paymentUrl;
+
+
+	protected $terminalId;
+
+
+	protected $token;
+
+
+	//protected $client;
+
+
+	protected $requestData;
+
+
+	protected $requestError;
+
+
+
 	protected function redirectByForm($url, array $params)
 	{
 		$elements = '';
@@ -35,6 +57,13 @@ class Gateway
 	public function getToken()
 	{
 		return $this->token;
+	}
+
+
+
+	public function getRequestData()
+	{
+		return $this->requestData;
 	}
 
 

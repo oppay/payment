@@ -12,7 +12,7 @@ interface GatewayInterface
 
 
 
-	public function send();
+	//public function send();
 
 
 

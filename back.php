@@ -10,11 +10,22 @@ $gateway = Payment\Payment::create('Saman');
 
 $receipt = $gateway->receipt(1000, -16, '', '44654654');
 
-if ($receipt->send())
+if ($receipt->isOk())
 {
 	$receipt->getData();
 
-	$receipt->verify();
+	//search RefNum in db
+	// if is unique
+
+	if ($receipt->verify())
+	{
+		//ok
+	}
+	else
+	{
+		$receipt->getError();
+		$receipt->reverse();
+	}
 
 
 }

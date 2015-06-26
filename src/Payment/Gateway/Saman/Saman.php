@@ -37,7 +37,8 @@ class Saman extends Gateway implements GatewayInterface
 	protected $requestError;
 
 
-	protected $errors = [
+	protected $errors =
+	[
 		"-1"  => "خطا در پردازش اطلاعات ارسالی",
 		"-3"  => "ورودی ها حاوی کاراکترهای غیر مجاز می باشند",
 		"-4"  => "کلمه عبور یا کد فروشنده اشتباه است",
@@ -58,7 +59,8 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	protected $states = [
+	protected $states =
+	[
 		"OK"                                   => "",
 		"Canceled By User"                     => "خطا در پردازش اطلاعات ارسالی",
 		"Invalid Amount"                       => "",
@@ -86,12 +88,12 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	public function send()
+	public function send($amount, $receiptId)
 	{
 		$params = [
 			'TermID'          => $this->terminalId,
-			'ResNum'          => $this->receiptId,
-			'TotalAmount'     => $this->amount,
+			'ResNum'          => $receiptId,
+			'TotalAmount'     => $amount,
 			/*
 			'SegAmount1'      => null,
 			'SegAmount2'      => null,

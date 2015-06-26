@@ -108,14 +108,14 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function send()
+	public function send($amount, $receiptId)
 	{
 		$params = [
 			'terminalId'     => $this->terminalId,
 			'userName'       => $this->userName,
 			'userPassword'   => $this->userPassword,
-			'orderId'        => $this->receiptId,
-			'amount'         => $this->amount,
+			'orderId'        => $receiptId,
+			'amount'         => $amount,
 			'localDate'      => date('Ymd'),
 			'localTime'      => date('His'),
 			'additionalData' => '',//$this->additionalData,

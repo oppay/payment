@@ -25,7 +25,7 @@ class Purchase
 
 	public function send()
 	{
-		return $this->gateway->send();
+		return $this->gateway->send($this->amount, $this->orderId);
 	}
 
 

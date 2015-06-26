@@ -6,7 +6,7 @@ use Payment\Gateway\GatewayInterface;
 use Payment\Gateway\Saman\Saman;
 use Payment\Gateway\Mellat\Mellat;
 
-class PaymentFactory
+class Payment
 {
 	protected static $gateway;
 

@@ -40,4 +40,11 @@ class Payment
 
 		return $purchase;
 	}
+
+
+
+	public function receipt()
+	{
+		return new Receipt(static::$gateway);
+	}
 }

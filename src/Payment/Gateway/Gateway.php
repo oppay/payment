@@ -35,7 +35,7 @@ class Gateway
 			$elements .= "<input type=\"hidden\" value=\"{$value}\" name=\"{$name}\" />";
 		}
 
-		include __DIR__ . '/form.html';
+		include __DIR__ . '/../form.html';
 	}
 
 

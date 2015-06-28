@@ -12,16 +12,16 @@ include('src/Payment/Purchase.php');
 
 $db = new PDO('mysql:host=127.0.0.1;port=3306;dbname=payment', 'root', '', array( PDO::ATTR_PERSISTENT => false));
 
-$gatewayName = 'Saman';
+$gatewayName = 'Mellat';
 
-$order = $stmt = $db->prepare("INSERT INTO purchase SET gateway = '$gatewayName', amount = 100");
+$order = $stmt = $db->prepare("INSERT INTO purchase SET gateway = '$gatewayName', amount = 1000");
 $stmt->execute();
 $orderId = $db->lastInsertId(); 
 
 
 $gateway = Payment\Payment::create('Saman', [
 	'terminalId'  => 21056352,
-	'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
+	'callbackUrl' => 'http://2.182.224.75/Payment/back.php',
 ]);
 
 
@@ -29,12 +29,12 @@ $gateway = Payment\Payment::create('Mellat', [
 	'terminalId'  => 802802,
 	'userName' => 'rahahost',
 	"userPassword"   => 'ra94ha',
-	'callbackUrl' => 'http://2.182.224.73/Payment/back.php',
+	'callbackUrl' => 'http://2.182.224.75/Payment/back.php',
 ]);
 /**/
 
 
-$purchase = $gateway->purchase(100, $orderId);
+$purchase = $gateway->purchase(1000, $orderId);
 
 if ($purchase->send())
 {

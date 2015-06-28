@@ -38,7 +38,7 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 	protected $errors = [
-		"error"   => "خطای ناشناخته!",
+		"error"   => "خطای درگاه پرداخت!",
 		"0"   => "",
 		"11"  => "",
 		"12"  => "",
@@ -46,7 +46,7 @@ class Mellat extends Gateway implements GatewayInterface
 		"14"  => "",
 		"15"  => "",
 		"16"  => "",
-		"17"  => "",
+		"17"  => "کاربر از انجام تراکنش منصرف شده است",
 		"18"  => "",
 		"19"  => "",
 		"111" => "",
@@ -176,6 +176,25 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
+	public function getResponseData()
+	{
+		return $_POST;
+	}
+
+
+
+	public function getResponseError()
+	{
+		if (isset($_POST['ResCode']) && isset($this->errors[$_POST['ResCode']]))
+		{
+			return ['code' => $_POST['ResCode'], 'message' => $this->errors[$_POST['ResCode']]];
+		}
+
+		return ['code' => null, 'message' => null];
+	}
+
+
+
 	public function getToken()
 	{
 		return $this->token;
@@ -190,63 +209,113 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
+	public function capture()
+	{
+		$this->saleOrderId     = $_POST['SaleOrderId'];
+		$this->resCode         = $_POST['ResCode'];
+		$this->saleOrderId     = $_POST['SaleOrderId'];
+		$this->saleReferenceId = $_POST['SaleReferenceId'];
+	}
+
+
+
+	public function isOk()
+	{
+		return isset($_POST['ResCode']) && ($_POST['ResCode'] === "0");
+	}
+
+
+/*
 	public function handle()
 	{
-/*
+
 		[RefId] => A434BF0F8C1BA9BB 
 		[ResCode] => 0 
 		[SaleOrderId] => -11 
-		[SaleReferenceId] => 106935951768 
+		[SaleReferenceId] => 106935951768
+
+
 		[CardHolderInfo] => 8A67E131795C8228B4AB27D6D6BC8F2ACFE579F37CED9131798BAF0F435BF0F1 
 		[CardHolderPan] => 610433****9374 ) 
-*/
+
 		$state = $_POST['state'];
 		if ($state !== 'OK')
 		{
 			echo "Error: $state";
 			exit;
 		}
-		if ($_POST['RefNum'] /*is not uniqu*/)
+		if ($_POST['RefNum'])
 		{
 			echo 'error';
 			exit;
 		}
 	}
+*/
 
 
-
-	public function verify()
+	public function verify($orderId, $saleOrderId, $saleReferenceId)
 	{
 		$params = [
-			'RefNum' => '',
-			'MID' => '',
+			'terminalId'      => $this->terminalId,
+			'userName'        => $this->userName,
+			'userPassword'    => $this->userPassword,
+			'orderId'         => $orderId,
+			'saleOrderId'     => $saleOrderId,
+			'saleReferenceId' => $saleReferenceId,
 		];
 
-		$res = $this->client->__soapCall('VerifyTransaction', $params);
+		$result = $this->client->__soapCall('bpVerifyRequest', [$params]);
 
-		if ($res < 0)
+		if ($result instanceof SoapFault)
 		{
-			echo "Error: $res";
-			exit;
+			$this->responseError = 'error';
+
+			return $this->inquiry($orderId, $saleOrderId, $saleReferenceId);
 		}
-		if ($res != $this->amount)
+
+		$result = $result->return;
+
+		if ($result !== '0')
 		{
-			$res = $this->client->__soapCall('reverseTransaction', ['RefNum' => $RefNum, 'MID' => $this->username, 'Username' => $this->username, 'Password' => $this->password]);
-			if ($res == 1)
-			{
-				echo 'Transaction reversed';
-				exit;
-			}
-			else
-			{
-				echo 'error';
-				exit;
-			}
+			$this->responseError = $result;
+
+			return false;
 		}
+
 		return true;
 	}
 
 
 
+	public function inquiry($orderId, $saleOrderId, $saleReferenceId)
+	{
+		$params = [
+			'terminalId'      => $this->terminalId,
+			'userName'        => $this->userName,
+			'userPassword'    => $this->userPassword,
+			'orderId'         => $orderId,
+			'saleOrderId'     => $saleOrderId,
+			'saleReferenceId' => $saleReferenceId,
+		];
 
+		$result = $this->client->__soapCall('bpVerifyRequest', [$params]);
+
+		if ($result instanceof SoapFault)
+		{
+			$this->responseError = 'error';
+
+			return false;
+		}
+
+		$result = $result->return;
+
+		if ($result !== '0')
+		{
+			$this->responseError = $result;
+
+			return false;
+		}
+
+		return true;
+	}
 }

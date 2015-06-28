@@ -1,21 +1,37 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<pre>
 <?php
 
 include('src/Payment/Payment.php');
-include('src/Payment/Gateway.php');
-include('src/Payment/GatewayInterface.php');
+include('src/Payment/Receipt.php');
+include('src/Payment/Gateway/Gateway.php');
+include('src/Payment/Gateway/GatewayInterface.php');
 include('src/Payment/Gateway/Saman/Saman.php');
+include('src/Payment/Gateway/Mellat/Mellat.php');
 include('src/Payment/Purchase.php');
 
-$gateway = Payment\Payment::create('Saman');
 
-$receipt = $gateway->receipt(1000, -16, '', '44654654');
+$gateway = Payment\Payment::create('Saman', [
+	'terminalId'  => 21056352,
+	'callbackUrl' => 'http://2.182.224.75/Payment/back.php',
+]);
+
+
+$gateway = Payment\Payment::create('Mellat', [
+	'terminalId'  => 802802,
+	'userName' => 'rahahost',
+	"userPassword"   => 'ra94ha',
+	'callbackUrl' => 'http://2.182.224.75/Payment/back.php',
+]);
+
+$receipt = $gateway->receipt();
+//$receipt = $gateway->capture();
 
 if ($receipt->isOk())
 {
 	$receipt->getData();
 
-	//search RefNum in db
-	// if is unique
+	//shomare kharid bayad yekta bashe && bablagh bayad barabar bashe
 
 	if ($receipt->verify())
 	{
@@ -23,7 +39,7 @@ if ($receipt->isOk())
 	}
 	else
 	{
-		$receipt->getError();
+		print_r($receipt->getError());
 		$receipt->reverse();
 	}
 
@@ -31,5 +47,5 @@ if ($receipt->isOk())
 }
 else
 {
-	$receipt->getError();
+	print_r($receipt->getError());
 }

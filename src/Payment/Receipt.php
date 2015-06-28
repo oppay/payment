@@ -1,0 +1,55 @@
+<?php
+
+namespace Payment;
+
+use Payment\Gateway\Gateway;
+
+class Receipt
+{
+	public function __construct(Gateway $gateway)
+	{
+		$this->gateway = $gateway;
+	}
+
+
+
+	public function isOk()
+	{
+		return $this->gateway->isOk();
+	}
+
+
+
+	public function getData()
+	{
+		return $this->gateway->getResponseData();
+	}
+
+
+
+	public function getError()
+	{
+		return $this->gateway->getResponseError();
+	}
+
+
+
+	public function getErrorCode()
+	{
+		return $this->gateway->getResponseError()['code'];
+	}
+
+
+
+	public function getErrorMessage()
+	{
+		return $this->gateway->getResponseError()['message'];
+	}
+
+
+
+	public function verify()
+	{
+		return $this->gateway->verify(168,168 , $_POST['SaleReferenceId']+0);
+	}
+}

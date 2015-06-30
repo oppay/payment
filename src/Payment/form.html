@@ -2,8 +2,15 @@
 <html>
 <head>
 <title></title>
+<meta charset="UTF-8">
 <style type="text/css">
 body{
+}
+
+form{
+	padding: 0;
+	margin: 0;
+	height: 0;
 }
 
 .spinner{
@@ -15,9 +22,32 @@ body{
 	margin: auto;
 }
 
-.spinner {
+.spinner{
 	width: 40px;
 	height: 40px;
+}
+
+.spinner .text{
+	position: absolute;
+	top: 120px;
+	left: 50%;
+	margin-left: -125px;
+	width: 250px;
+	text-align: center;
+}
+
+.spinner .text button{
+	padding: 9px 25px 5px 25px;
+	margin: 0;
+	border: 0;
+	border-bottom: 2px solid #097438;
+	color: #FFF;
+	direction: rtl;
+	background-color: #2ECD71;
+	text-shadow: 0 1px 0 rgba(0,0,0,.3);
+	font: bold 16px/1.3em arial;
+	border-radius: 4px;
+	cursor: pointer;
 }
 
 .cube1, .cube2{
@@ -67,12 +97,18 @@ body{
 </head>
 <body>
 
-<div class="spinner">
-	<div class="cube1"></div>
-	<div class="cube2"></div>
-</div>
-
 <form action="<?php echo $url ?>" method="post">
+
+	<div class="spinner">
+		<div class="cube1"></div>
+		<div class="cube2"></div>
+		<div class="text">
+			<noscript>
+				<button type="submit">اتصال به درگاه پرداخت</button>
+			</noscript>
+		</div>
+	</div>
+
 	<?php echo $elements ?>
 </form>
 
@@ -80,7 +116,7 @@ body{
 	setTimeout(function()
 	{
 		document.getElementsByTagName('form')[0].submit();
-	}, 000);
+	}, 1000);
 </script>
 
 </body>

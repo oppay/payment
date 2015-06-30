@@ -5,9 +5,6 @@ namespace Payment\Gateway\Mellat;
 use Payment\Gateway\Gateway;
 use Payment\Gateway\GatewayInterface;
 
-use SoapClient;
-use SoapFault;
-
 class Mellat extends Gateway implements GatewayInterface
 {
 	protected $wsdlUrl = 'https://bpm.shaparak.ir/pgwchannel/services/pgw?wsdl';
@@ -19,10 +16,13 @@ class Mellat extends Gateway implements GatewayInterface
 	protected $terminalId;
 
 
-	protected $amount;
+	protected $userName;
 
 
-	protected $receiptId;
+	protected $userPassword;
+
+	
+	protected $callbackUrl;
 
 
 	protected $token;
@@ -37,8 +37,14 @@ class Mellat extends Gateway implements GatewayInterface
 	protected $requestError;
 
 
+	protected $responseData;
+
+
+	protected $responseError;
+
+
 	protected $errors = [
-		"error"   => "خطای درگاه پرداخت!",
+		"error" => "خطای درگاه پرداخت!",
 		"0"   => "",
 		"11"  => "",
 		"12"  => "",
@@ -98,34 +104,24 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function purchase(array $params)
-	{
-		$this->amount    = (int)$params['amount'];
-		$this->receiptId = $params['receiptId'];
-
-		return $this;
-	}
-
-
-
 	public function send($amount, $receiptId)
 	{
 		$params = [
-			'terminalId'     => $this->terminalId,
+			'terminalId'     => $this->terminalId + 0,
 			'userName'       => $this->userName,
 			'userPassword'   => $this->userPassword,
-			'orderId'        => $receiptId,
-			'amount'         => $amount,
+			'orderId'        => $receiptId + 0,
+			'amount'         => $amount + 0,
 			'localDate'      => date('Ymd'),
 			'localTime'      => date('His'),
-			'additionalData' => '',//$this->additionalData,
+			'additionalData' => '',
 			'callBackUrl'    => $this->callbackUrl,
-			'payerId'        => 0,//$this->payerId,
+			'payerId'        => 0,
 		];
 
 		$result = $this->client->__soapCall('bpPayRequest', [$params]);
 
-		if ($result instanceof SoapFault)
+		if ($result instanceof \SoapFault)
 		{
 			$this->requestError = 'error';
 
@@ -143,16 +139,9 @@ class Mellat extends Gateway implements GatewayInterface
 
 		$this->token = $result[1];
 
-		$this->requestData = $result[1];
+		$this->requestData = implode(',', $result);
 
 		return true;
-	}
-
-
-
-	public function isReady()
-	{
-		return $this->requestError === null;
 	}
 
 
@@ -176,25 +165,6 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function getResponseData()
-	{
-		return $_POST;
-	}
-
-
-
-	public function getResponseError()
-	{
-		if (isset($_POST['ResCode']) && isset($this->errors[$_POST['ResCode']]))
-		{
-			return ['code' => $_POST['ResCode'], 'message' => $this->errors[$_POST['ResCode']]];
-		}
-
-		return ['code' => null, 'message' => null];
-	}
-
-
-
 	public function getToken()
 	{
 		return $this->token;
@@ -209,71 +179,78 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function capture()
+	public function captureResponse()
 	{
-		$this->saleOrderId     = $_POST['SaleOrderId'];
-		$this->resCode         = $_POST['ResCode'];
-		$this->saleOrderId     = $_POST['SaleOrderId'];
-		$this->saleReferenceId = $_POST['SaleReferenceId'];
-	}
-
-
-
-	public function isOk()
-	{
-		return isset($_POST['ResCode']) && ($_POST['ResCode'] === "0");
-	}
-
-
-/*
-	public function handle()
-	{
-
-		[RefId] => A434BF0F8C1BA9BB 
-		[ResCode] => 0 
-		[SaleOrderId] => -11 
-		[SaleReferenceId] => 106935951768
-
-
-		[CardHolderInfo] => 8A67E131795C8228B4AB27D6D6BC8F2ACFE579F37CED9131798BAF0F435BF0F1 
-		[CardHolderPan] => 610433****9374 ) 
-
-		$state = $_POST['state'];
-		if ($state !== 'OK')
+		if (!(isset($_POST['ResCode']) && ($_POST['ResCode'] === "0")))
 		{
-			echo "Error: $state";
-			exit;
-		}
-		if ($_POST['RefNum'])
-		{
-			echo 'error';
-			exit;
+			$this->responseError = $_POST['ResCode'];
 		}
 	}
-*/
 
 
-	public function verify($orderId, $saleOrderId, $saleReferenceId)
+
+	public function isResponseOk()
+	{
+		return $this->responseError === null;
+	}
+
+
+
+	public function getResponseData()
+	{
+		if (isset($_POST['SaleOrderId']))
+		{
+			$_POST['SaleOrderId'] = $_POST['SaleOrderId'] + 0;
+		}
+
+		if (isset($_POST['SaleReferenceId']))
+		{
+			$_POST['SaleReferenceId'] = $_POST['SaleReferenceId'] + 0;
+		}
+
+		return $_POST;
+	}
+
+
+
+	public function getResponseError()
+	{
+		if (isset($this->errors[$this->responseError]))
+		{
+			return ['code' => $this->responseError, 'message' => $this->errors[$this->responseError]];
+		}
+
+		return ['code' => null, 'message' => null];
+	}
+
+
+
+	public function verify($orderId, $saleReferenceId)
 	{
 		$params = [
-			'terminalId'      => $this->terminalId,
+			'terminalId'      => $this->terminalId + 0,
 			'userName'        => $this->userName,
 			'userPassword'    => $this->userPassword,
-			'orderId'         => $orderId,
-			'saleOrderId'     => $saleOrderId,
-			'saleReferenceId' => $saleReferenceId,
+			'orderId'         => $orderId + 0,
+			'saleOrderId'     => $orderId + 0,
+			'saleReferenceId' => $saleReferenceId + 0,
 		];
 
 		$result = $this->client->__soapCall('bpVerifyRequest', [$params]);
 
-		if ($result instanceof SoapFault)
+		if ($result instanceof \SoapFault)
 		{
-			$this->responseError = 'error';
+			//$this->responseError = 'error';
 
-			return $this->inquiry($orderId, $saleOrderId, $saleReferenceId);
+			return $this->inquiry($orderId, $saleReferenceId);
 		}
 
 		$result = $result->return;
+
+		if ($result === '43')
+		{
+			return $this->inquiry($orderId, $saleReferenceId);
+		}
 
 		if ($result !== '0')
 		{
@@ -287,20 +264,20 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function inquiry($orderId, $saleOrderId, $saleReferenceId)
+	public function inquiry($orderId, $saleReferenceId)
 	{
 		$params = [
-			'terminalId'      => $this->terminalId,
+			'terminalId'      => $this->terminalId + 0,
 			'userName'        => $this->userName,
 			'userPassword'    => $this->userPassword,
-			'orderId'         => $orderId,
-			'saleOrderId'     => $saleOrderId,
-			'saleReferenceId' => $saleReferenceId,
+			'orderId'         => $orderId + 0,
+			'saleOrderId'     => $orderId + 0,
+			'saleReferenceId' => $saleReferenceId + 0,
 		];
 
-		$result = $this->client->__soapCall('bpVerifyRequest', [$params]);
+		$result = $this->client->__soapCall('bpInquiryRequest', [$params]);
 
-		if ($result instanceof SoapFault)
+		if ($result instanceof \SoapFault)
 		{
 			$this->responseError = 'error';
 

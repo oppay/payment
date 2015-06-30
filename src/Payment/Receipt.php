@@ -9,13 +9,15 @@ class Receipt
 	public function __construct(Gateway $gateway)
 	{
 		$this->gateway = $gateway;
+		
+		$this->gateway->captureResponse();
 	}
 
 
 
 	public function isOk()
 	{
-		return $this->gateway->isOk();
+		return $this->gateway->isResponseOk();
 	}
 
 
@@ -50,6 +52,6 @@ class Receipt
 
 	public function verify()
 	{
-		return $this->gateway->verify(168,168 , $_POST['SaleReferenceId']+0);
+		return $this->gateway->verify($_POST['SaleOrderId']+0, $_POST['SaleReferenceId']+0);
 	}
 }

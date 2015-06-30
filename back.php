@@ -29,7 +29,7 @@ $receipt = $gateway->receipt();
 
 if ($receipt->isOk())
 {
-	$receipt->getData();
+	var_dump($receipt->getData());
 
 	//shomare kharid bayad yekta bashe && bablagh bayad barabar bashe
 
@@ -40,7 +40,7 @@ if ($receipt->isOk())
 	else
 	{
 		print_r($receipt->getError());
-		$receipt->reverse();
+		//$receipt->reverse();
 	}
 
 

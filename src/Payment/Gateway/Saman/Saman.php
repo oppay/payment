@@ -5,11 +5,38 @@ namespace Payment\Gateway\Saman;
 use Payment\Gateway\Gateway;
 use Payment\Gateway\GatewayInterface;
 
-use SoapClient;
-use SoapFault;
-
 class Saman extends Gateway implements GatewayInterface
 {
+	protected $wsdlUrl = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?wsdl';
+
+
+	protected $paymentUrl = 'https://sep.shaparak.ir/Payment.aspx';
+
+
+	protected $terminalId;
+
+	
+	protected $callbackUrl;
+
+
+	protected $token;
+
+
+	//protected $client;
+
+
+	protected $requestData;
+
+
+	protected $requestError;
+
+
+	protected $responseData;
+
+
+	protected $responseError;
+
+
 	protected $errors =
 	[
 		"-1"  => "خطا در پردازش اطلاعات ارسالی",
@@ -34,9 +61,9 @@ class Saman extends Gateway implements GatewayInterface
 	protected $states =
 	[
 		"OK"                                   => "",
-		"Canceled By User"                     => "خطا در پردازش اطلاعات ارسالی",
+		"Canceled By User"                     => "",
 		"Invalid Amount"                       => "",
-		"Invalid Transaction"                  => "",
+		"InvalidTransaction"                  => "",
 		"Invalid Card Number"                  => "",
 		"No Such Issuer"                       => "",
 		"Expired Card Pick Up"                 => "",
@@ -56,9 +83,6 @@ class Saman extends Gateway implements GatewayInterface
 	{
 		$this->terminalId  = $params['terminalId'];
 		$this->callbackUrl = $params['callbackUrl'];
-
-		$this->wsdlUrl    = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?wsdl';
-		$this->paymentUrl = 'https://sep.shaparak.ir/Payment.aspx';
 	}
 
 
@@ -66,9 +90,9 @@ class Saman extends Gateway implements GatewayInterface
 	public function send($amount, $receiptId)
 	{
 		$params = [
-			'TermID'          => $this->terminalId,
-			'ResNum'          => $receiptId,
-			'TotalAmount'     => $amount,
+			'TermID'          => (string)$this->terminalId,
+			'ResNum'          => (string)$receiptId,
+			'TotalAmount'     => $amount + 0,
 			/*
 			'SegAmount1'      => null,
 			'SegAmount2'      => null,
@@ -100,6 +124,13 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
+	public function getRequestData()
+	{
+		return $this->requestData;
+	}
+
+
+
 	public function getRequestError()
 	{
 		if (isset($this->errors[$this->requestError]))
@@ -112,6 +143,13 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
+	public function getToken()
+	{
+		return $this->token;
+	}
+
+
+
 	public function redirect()
 	{
 		$this->redirectByForm($this->paymentUrl, ['Token' => $this->token, 'RedirectURL' => $this->callbackUrl]);
@@ -119,61 +157,50 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	/*public function capture()
+	public function captureResponse()
 	{
-		// redirect to RedirectURL
-		// $_POST['State']
-		// $_POST['RefNum']
-		// $_POST['ResNum']
-		// $_POST['MID']
-		// $_POST['TraceNo']
+		if (!(isset($_POST['State']) && ($_POST['State'] === "OK")))
+		{
+			$this->responseError = $_POST['State'];
+		}
 	}
 
 
 
-	public function isSuccessfulResponse()
+	public function isResponseOk()
 	{
-		return ($_POST['State'] === 'OK' && $_POST['RefNum'] === $token) ? true : false;
+		return $this->responseError === null;
 	}
 
 
 
 	public function getResponseData()
 	{
-		//return $this->requestData;
+		return $_POST;
 	}
 
 
 
 	public function getResponseError()
 	{
-		return $_POST['State'];
+		if (isset($this->states[$this->responseError]))
+		{
+			return ['code' => $this->responseError, 'message' => $this->states[$this->responseError]];
+		}
+
+		return ['code' => null, 'message' => null];
 	}
 
 
 
-	public function check($amount, $orderId, $token)
-	{
-		// redirect to RedirectURL
-		// $_POST['State']
-		// $_POST['RefNum']
-		// $_POST['ResNum']
-		// $_POST['MID']
-		// $_POST['TraceNo']
-
-		return ($_POST['State'] === 'OK' && $_POST['RefNum'] === $token) ? true : false;
-	}
-
-
-
-	public function verify()
+	public function verify($orderId, $saleReferenceId)
 	{
 		$params = [
-			'RefNum' => '',
-			'MID' => '',
+			'RefNum' => (string)$saleReferenceId,
+			'MID'    => (string)$this->terminalId,
 		];
 
-		$res = $this->client->__soapCall('VerifyTransaction', $params);
+		$res = $this->client->__soapCall('verifyTransaction', $params);print_r($res);
 
 		if ($res < 0)
 		{
@@ -195,5 +222,39 @@ class Saman extends Gateway implements GatewayInterface
 			}
 		}
 		return true;
-	}*/
+	}
+
+
+
+	public function inquiry($orderId, $saleReferenceId)
+	{
+		/*$params = [
+			'terminalId'      => $this->terminalId + 0,
+			'userName'        => $this->userName,
+			'userPassword'    => $this->userPassword,
+			'orderId'         => $orderId + 0,
+			'saleOrderId'     => $orderId + 0,
+			'saleReferenceId' => $saleReferenceId + 0,
+		];
+
+		$result = $this->client->__soapCall('bpInquiryRequest', [$params]);
+
+		if ($result instanceof \SoapFault)
+		{
+			$this->responseError = 'error';
+
+			return false;
+		}
+
+		$result = $result->return;
+
+		if ($result !== '0')
+		{
+			$this->responseError = $result;
+
+			return false;
+		}
+
+		return true;*/
+	}
 }

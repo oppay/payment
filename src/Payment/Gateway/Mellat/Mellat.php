@@ -28,9 +28,6 @@ class Mellat extends Gateway implements GatewayInterface
 	protected $token;
 
 
-	//protected $client;
-
-
 	protected $requestData;
 
 
@@ -104,6 +101,15 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
+	public function client($url = null)
+	{
+		$url = $url ?: $this->wsdlUrl;
+
+		return new \SoapClient($url, ['exceptions' => false, 'encoding' => 'UTF-8']);
+	}
+
+
+
 	public function send($amount, $receiptId)
 	{
 		$params = [
@@ -119,7 +125,7 @@ class Mellat extends Gateway implements GatewayInterface
 			'payerId'        => 0,
 		];
 
-		$result = $this->client->__soapCall('bpPayRequest', [$params]);
+		$result = $this->client()->__soapCall('bpPayRequest', [$params]);
 
 		if ($result instanceof \SoapFault)
 		{
@@ -236,7 +242,7 @@ class Mellat extends Gateway implements GatewayInterface
 			'saleReferenceId' => $saleReferenceId + 0,
 		];
 
-		$result = $this->client->__soapCall('bpVerifyRequest', [$params]);
+		$result = $this->client()->__soapCall('bpVerifyRequest', [$params]);
 
 		if ($result instanceof \SoapFault)
 		{
@@ -275,7 +281,7 @@ class Mellat extends Gateway implements GatewayInterface
 			'saleReferenceId' => $saleReferenceId + 0,
 		];
 
-		$result = $this->client->__soapCall('bpInquiryRequest', [$params]);
+		$result = $this->client()->__soapCall('bpInquiryRequest', [$params]);
 
 		if ($result instanceof \SoapFault)
 		{

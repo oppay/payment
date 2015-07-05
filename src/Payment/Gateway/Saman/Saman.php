@@ -10,6 +10,9 @@ class Saman extends Gateway implements GatewayInterface
 	protected $wsdlUrl = 'https://sep.shaparak.ir/Payments/InitPayment.asmx?wsdl';
 
 
+	protected $wsdlVerifyUrl = 'https://sep.shaparak.ir/Payments/referencepayment.asmx?WSDL';
+
+
 	protected $paymentUrl = 'https://sep.shaparak.ir/Payment.aspx';
 
 
@@ -20,9 +23,6 @@ class Saman extends Gateway implements GatewayInterface
 
 
 	protected $token;
-
-
-	//protected $client;
 
 
 	protected $requestData;
@@ -60,10 +60,11 @@ class Saman extends Gateway implements GatewayInterface
 
 	protected $states =
 	[
+		"error"                                => "در اتصال با درگاه پرداخت خطایی رخ داده!",
 		"OK"                                   => "",
 		"Canceled By User"                     => "",
 		"Invalid Amount"                       => "",
-		"InvalidTransaction"                  => "",
+		"InvalidTransaction"                   => "",
 		"Invalid Card Number"                  => "",
 		"No Such Issuer"                       => "",
 		"Expired Card Pick Up"                 => "",
@@ -87,6 +88,15 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
+	public function client($url = null)
+	{
+		$url = $url ?: $this->wsdlUrl;
+
+		return new \SoapClient($url, ['exceptions' => false, 'encoding' => 'UTF-8']);
+	}
+
+
+
 	public function send($amount, $receiptId)
 	{
 		$params = [
@@ -106,7 +116,14 @@ class Saman extends Gateway implements GatewayInterface
 			*/
 		];
 
-		$result = $this->client->__soapCall('RequestToken', $params);
+		$result = $this->client()->__soapCall('RequestToken', $params);
+
+		if ($result instanceof \SoapFault)
+		{
+			$this->requestError = 'error';
+
+			return false;
+		}
 
 		if (is_numeric($result) and $result <= 0)
 		{
@@ -196,21 +213,30 @@ class Saman extends Gateway implements GatewayInterface
 	public function verify($orderId, $saleReferenceId)
 	{
 		$params = [
-			'RefNum' => (string)$saleReferenceId,
-			'MID'    => (string)$this->terminalId,
+			'RefNum'     => (string)$saleReferenceId,
+			'MerchantID' => (string)$this->terminalId,
 		];
 
-		$res = $this->client->__soapCall('verifyTransaction', $params);print_r($res);
+		$result = $this->client($this->wsdlVerifyUrl)->__soapCall('verifyTransaction', $params);
 
-		if ($res < 0)
+		if ($result instanceof \SoapFault)
 		{
-			echo "Error: $res";
-			exit;
+			$this->requestError = 'error';
+
+			return false;
 		}
-		if ($res != $this->amount)
+
+		if (is_numeric($result) and $result <= 0)
 		{
-			$res = $this->client->__soapCall('reverseTransaction', ['RefNum' => $RefNum, 'MID' => $this->username, 'Username' => $this->username, 'Password' => $this->password]);
-			if ($res == 1)
+			$this->requestError = $result;
+
+			return false;
+		}
+
+		if ($result != $this->amount)
+		{
+			$result = $this->client($this->wsdlVerifyUrl)->__soapCall('reverseTransaction', ['RefNum' => $RefNum, 'MID' => $this->username, 'Username' => $this->username, 'Password' => $this->password]);
+			if ($result == 1)
 			{
 				echo 'Transaction reversed';
 				exit;
@@ -222,39 +248,5 @@ class Saman extends Gateway implements GatewayInterface
 			}
 		}
 		return true;
-	}
-
-
-
-	public function inquiry($orderId, $saleReferenceId)
-	{
-		/*$params = [
-			'terminalId'      => $this->terminalId + 0,
-			'userName'        => $this->userName,
-			'userPassword'    => $this->userPassword,
-			'orderId'         => $orderId + 0,
-			'saleOrderId'     => $orderId + 0,
-			'saleReferenceId' => $saleReferenceId + 0,
-		];
-
-		$result = $this->client->__soapCall('bpInquiryRequest', [$params]);
-
-		if ($result instanceof \SoapFault)
-		{
-			$this->responseError = 'error';
-
-			return false;
-		}
-
-		$result = $result->return;
-
-		if ($result !== '0')
-		{
-			$this->responseError = $result;
-
-			return false;
-		}
-
-		return true;*/
 	}
 }

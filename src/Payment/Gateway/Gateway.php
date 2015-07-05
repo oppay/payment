@@ -65,23 +65,4 @@ class Gateway
 	{
 		return $this->requestData;
 	}
-
-
-
-	public function getTransactionId()
-	{
-		return $this->transactionId;
-	}
-
-
-
-	public function __get($name)
-	{
-		if ($name === 'client')
-		{
-			$this->client = new \SoapClient($this->wsdlUrl, ['exceptions' => false, 'encoding' => 'UTF-8']);
-		}
-
-		return $this->client;
-	}
 }

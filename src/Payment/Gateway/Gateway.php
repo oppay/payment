@@ -28,6 +28,9 @@ class Gateway
 	protected $responseError;
 
 
+	protected $errors = [];
+
+
 
 	protected function client($url = null)
 	{

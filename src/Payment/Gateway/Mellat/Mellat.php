@@ -23,7 +23,7 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 	protected $errors = [
-		'error' => 'در اتصال با درگاه پرداخت خطایی رخ داده!',
+		'error' => 'در اتصال به درگاه پرداخت خطایی رخ داده!',
 		'0'   => 'تراكنش با موفقيت انجام شد',
 		'11'  => 'شماره كارت نامعتبر است',
 		'12'  => 'موجودي كافي نيست',
@@ -99,7 +99,7 @@ class Mellat extends Gateway implements GatewayInterface
 		];
 
 		$result = $this->client()->__soapCall('bpPayRequest', [$params]);
-print_r($params);
+
 		if ($result instanceof \SoapFault)
 		{
 			$this->requestError = 'error';

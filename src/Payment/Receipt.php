@@ -3,10 +3,15 @@
 namespace Payment;
 
 use Payment\Gateway\Gateway;
+use Payment\Gateway\GatewayInterface;
 
 class Receipt
 {
-	public function __construct(Gateway $gateway)
+	protected $gateway;
+
+
+
+	public function __construct(GatewayInterface $gateway)
 	{
 		$this->gateway = $gateway;
 		

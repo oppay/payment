@@ -10,19 +10,31 @@ class Gateway
 	protected $paymentUrl;
 
 
-	protected $terminalId;
+	protected $callbackUrl;
 
 
 	protected $token;
-
-
-	//protected $client;
 
 
 	protected $requestData;
 
 
 	protected $requestError;
+
+
+	protected $responseData;
+
+
+	protected $responseError;
+
+
+
+	protected function client($url = null)
+	{
+		$url = $url ?: $this->wsdlUrl;
+
+		return new \SoapClient($url, ['exceptions' => false, 'encoding' => 'UTF-8']);
+	}
 
 
 
@@ -40,20 +52,6 @@ class Gateway
 
 
 
-	public function getAmount()
-	{
-		return $this->amount;
-	}
-
-
-
-	public function getReceiptId()
-	{
-		return $this->receiptId;
-	}
-
-
-
 	public function getToken()
 	{
 		return $this->token;
@@ -64,5 +62,43 @@ class Gateway
 	public function getRequestData()
 	{
 		return $this->requestData;
+	}
+
+
+
+	public function getRequestError()
+	{
+		if (isset($this->errors[$this->requestError]))
+		{
+			return ['code' => $this->requestError, 'message' => $this->errors[$this->requestError]];
+		}
+
+		return ['code' => null, 'message' => null];
+	}
+
+
+
+	public function isResponseOk()
+	{
+		return $this->responseError === null;
+	}
+
+
+
+	public function getResponseData()
+	{
+		return $_POST;
+	}
+
+
+
+	public function getResponseError()
+	{
+		if (isset($this->errors[$this->responseError]))
+		{
+			return ['code' => $this->responseError, 'message' => $this->errors[$this->responseError]];
+		}
+
+		return ['code' => null, 'message' => null];
 	}
 }

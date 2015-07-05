@@ -13,31 +13,13 @@ class Mellat extends Gateway implements GatewayInterface
 	protected $paymentUrl = 'https://bpm.shaparak.ir/pgwchannel/startpay.mellat';
 
 
-	protected $terminalId;
-
-
 	protected $userName;
 
 
 	protected $userPassword;
 
-	
-	protected $callbackUrl;
 
-
-	protected $token;
-
-
-	protected $requestData;
-
-
-	protected $requestError;
-
-
-	protected $responseData;
-
-
-	protected $responseError;
+	protected $terminalId;
 
 
 	protected $errors = [
@@ -101,15 +83,6 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function client($url = null)
-	{
-		$url = $url ?: $this->wsdlUrl;
-
-		return new \SoapClient($url, ['exceptions' => false, 'encoding' => 'UTF-8']);
-	}
-
-
-
 	public function send($amount, $receiptId)
 	{
 		$params = [
@@ -126,7 +99,7 @@ class Mellat extends Gateway implements GatewayInterface
 		];
 
 		$result = $this->client()->__soapCall('bpPayRequest', [$params]);
-
+print_r($params);
 		if ($result instanceof \SoapFault)
 		{
 			$this->requestError = 'error';
@@ -152,32 +125,6 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function getRequestData()
-	{
-		return $this->requestData;
-	}
-
-
-
-	public function getRequestError()
-	{
-		if (isset($this->errors[$this->requestError]))
-		{
-			return ['code' => $this->requestError, 'message' => $this->errors[$this->requestError]];
-		}
-
-		return ['code' => null, 'message' => null];
-	}
-
-
-
-	public function getToken()
-	{
-		return $this->token;
-	}
-
-
-
 	public function redirect()
 	{
 		$this->redirectByForm($this->paymentUrl, ['RefId' => $this->token]);
@@ -191,13 +138,6 @@ class Mellat extends Gateway implements GatewayInterface
 		{
 			$this->responseError = $_POST['ResCode'];
 		}
-	}
-
-
-
-	public function isResponseOk()
-	{
-		return $this->responseError === null;
 	}
 
 
@@ -219,18 +159,6 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function getResponseError()
-	{
-		if (isset($this->errors[$this->responseError]))
-		{
-			return ['code' => $this->responseError, 'message' => $this->errors[$this->responseError]];
-		}
-
-		return ['code' => null, 'message' => null];
-	}
-
-
-
 	public function verify($orderId, $saleReferenceId)
 	{
 		$params = [
@@ -246,8 +174,6 @@ class Mellat extends Gateway implements GatewayInterface
 
 		if ($result instanceof \SoapFault)
 		{
-			//$this->responseError = 'error';
-
 			return $this->inquiry($orderId, $saleReferenceId);
 		}
 

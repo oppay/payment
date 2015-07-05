@@ -3,6 +3,7 @@
 namespace Payment;
 
 use Payment\Gateway\Gateway;
+use Payment\Gateway\GatewayInterface;
 
 class Purchase
 {
@@ -16,7 +17,7 @@ class Purchase
 
 
 
-	public function __construct($amount, $orderId, Gateway $gateway)
+	public function __construct($amount, $orderId, GatewayInterface $gateway)
 	{
 		$this->amount  = (int)$amount;
 		$this->orderId = $orderId;

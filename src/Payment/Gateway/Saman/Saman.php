@@ -18,24 +18,6 @@ class Saman extends Gateway implements GatewayInterface
 
 	protected $terminalId;
 
-	
-	protected $callbackUrl;
-
-
-	protected $token;
-
-
-	protected $requestData;
-
-
-	protected $requestError;
-
-
-	protected $responseData;
-
-
-	protected $responseError;
-
 
 	protected $errors =
 	[
@@ -88,32 +70,12 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	public function client($url = null)
-	{
-		$url = $url ?: $this->wsdlUrl;
-
-		return new \SoapClient($url, ['exceptions' => false, 'encoding' => 'UTF-8']);
-	}
-
-
-
 	public function send($amount, $receiptId)
 	{
 		$params = [
 			'TermID'          => (string)$this->terminalId,
 			'ResNum'          => (string)$receiptId,
 			'TotalAmount'     => $amount + 0,
-			/*
-			'SegAmount1'      => null,
-			'SegAmount2'      => null,
-			'SegAmount3'      => null,
-			'SegAmount4'      => null,
-			'SegAmount5'      => null,
-			'SegAmount6'      => null,
-			'AdditionalData1' => null,
-			'AdditionalData1' => null,
-			'wage'            => null,
-			*/
 		];
 
 		$result = $this->client()->__soapCall('RequestToken', $params);
@@ -125,7 +87,7 @@ class Saman extends Gateway implements GatewayInterface
 			return false;
 		}
 
-		if (is_numeric($result) and $result <= 0)
+		if (is_numeric($result) && $result <= 0)
 		{
 			$this->requestError = $result;
 
@@ -137,32 +99,6 @@ class Saman extends Gateway implements GatewayInterface
 		$this->requestData = $result;
 
 		return true;
-	}
-
-
-
-	public function getRequestData()
-	{
-		return $this->requestData;
-	}
-
-
-
-	public function getRequestError()
-	{
-		if (isset($this->errors[$this->requestError]))
-		{
-			return ['code' => $this->requestError, 'message' => $this->errors[$this->requestError]];
-		}
-
-		return ['code' => null, 'message' => null];
-	}
-
-
-
-	public function getToken()
-	{
-		return $this->token;
 	}
 
 
@@ -184,32 +120,6 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	public function isResponseOk()
-	{
-		return $this->responseError === null;
-	}
-
-
-
-	public function getResponseData()
-	{
-		return $_POST;
-	}
-
-
-
-	public function getResponseError()
-	{
-		if (isset($this->states[$this->responseError]))
-		{
-			return ['code' => $this->responseError, 'message' => $this->states[$this->responseError]];
-		}
-
-		return ['code' => null, 'message' => null];
-	}
-
-
-
 	public function verify($orderId, $saleReferenceId)
 	{
 		$params = [
@@ -226,27 +136,13 @@ class Saman extends Gateway implements GatewayInterface
 			return false;
 		}
 
-		if (is_numeric($result) and $result <= 0)
+		if (is_numeric($result) && $result <= 0)
 		{
 			$this->requestError = $result;
 
 			return false;
 		}
-
-		if ($result != $this->amount)
-		{
-			$result = $this->client($this->wsdlVerifyUrl)->__soapCall('reverseTransaction', ['RefNum' => $RefNum, 'MID' => $this->username, 'Username' => $this->username, 'Password' => $this->password]);
-			if ($result == 1)
-			{
-				echo 'Transaction reversed';
-				exit;
-			}
-			else
-			{
-				echo 'error';
-				exit;
-			}
-		}
+		
 		return true;
 	}
 }

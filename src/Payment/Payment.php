@@ -26,7 +26,6 @@ class Payment
 
 			default:
 				throw new \InvalidArgumentException();
-				break;
 		}
 
 		return new static;

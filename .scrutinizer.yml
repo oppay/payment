@@ -1,0 +1,18 @@
+checks:
+    php:
+        code_rating: true
+        duplication: true
+        avoid_superglobals: false
+
+coding_style:
+    php:
+        indentation:
+            general:
+                use_tabs: true
+        spaces:
+            other:
+                after_type_cast: false
+
+filter:
+    paths:
+        - src/*

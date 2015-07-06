@@ -3,8 +3,9 @@
 namespace Payment;
 
 use Payment\Gateway\GatewayInterface;
-use Payment\Gateway\Saman\Saman;
 use Payment\Gateway\Mellat\Mellat;
+use Payment\Gateway\Saman\Saman;
+use Payment\Gateway\Parsian\Parsian;
 
 class Payment
 {
@@ -22,6 +23,10 @@ class Payment
 
 			case 'Mellat':
 				static::$gateway = new Mellat($params);
+				break;
+
+			case 'Parsian':
+				static::$gateway = new Parsian($params);
 				break;
 
 			default:

@@ -97,7 +97,7 @@ form{
 </head>
 <body>
 
-<form action="<?php echo $url ?>" method="post">
+<form action="<?php echo $url ?>" method="<?php echo $method ?>">
 
 	<div class="spinner">
 		<div class="cube1"></div>

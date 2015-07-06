@@ -41,16 +41,34 @@ class Gateway
 
 
 
-	protected function redirectByForm($url, array $params)
+	protected function redirectByPostMethod($url, array $getParams, array $postParams)
 	{
 		$elements = '';
 
-		foreach ($params as $name => $value)
+		foreach ($postParams as $name => $value)
 		{
 			$elements .= "<input type=\"hidden\" value=\"{$value}\" name=\"{$name}\" />";
 		}
 
-		include __DIR__ . '/../form.html';
+		$method = 'POST';
+
+		include __DIR__ . '/../form.php';
+	}
+
+
+
+	protected function redirectByGetMethod($url, array $getParams)
+	{
+		$elements = '';
+
+		foreach ($getParams as $name => $value)
+		{
+			$elements .= "<input type=\"hidden\" value=\"{$value}\" name=\"{$name}\" />";
+		}
+
+		$method = 'GET';
+
+		include __DIR__ . '/../form.php';
 	}
 
 

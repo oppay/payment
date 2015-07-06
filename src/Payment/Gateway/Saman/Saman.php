@@ -105,7 +105,7 @@ class Saman extends Gateway implements GatewayInterface
 
 	public function redirect()
 	{
-		$this->redirectByPostMethod($this->paymentUrl, ['Token' => $this->token, 'RedirectURL' => $this->callbackUrl]);
+		$this->redirectByPostMethod($this->paymentUrl, [], ['Token' => $this->token, 'RedirectURL' => $this->callbackUrl]);
 	}
 
 

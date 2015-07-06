@@ -127,7 +127,7 @@ class Mellat extends Gateway implements GatewayInterface
 
 	public function redirect()
 	{
-		$this->redirectByForm($this->paymentUrl, ['RefId' => $this->token]);
+		$this->redirectByPostMethod($this->paymentUrl, [], ['RefId' => $this->token]);
 	}
 
 

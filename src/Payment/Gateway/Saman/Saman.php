@@ -105,7 +105,7 @@ class Saman extends Gateway implements GatewayInterface
 
 	public function redirect()
 	{
-		$this->redirectByForm($this->paymentUrl, ['Token' => $this->token, 'RedirectURL' => $this->callbackUrl]);
+		$this->redirectByPostMethod($this->paymentUrl, ['Token' => $this->token, 'RedirectURL' => $this->callbackUrl]);
 	}
 
 
@@ -142,7 +142,7 @@ class Saman extends Gateway implements GatewayInterface
 
 			return false;
 		}
-		
+
 		return true;
 	}
 }

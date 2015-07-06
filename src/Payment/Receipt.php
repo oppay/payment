@@ -57,6 +57,6 @@ class Receipt
 
 	public function verify()
 	{
-		return $this->gateway->verify($_POST['SaleOrderId']+0, $_POST['SaleReferenceId']+0);
+		return $this->gateway->verify($_POST['SaleOrderId'] + 0, $_POST['SaleReferenceId'] + 0);
 	}
 }

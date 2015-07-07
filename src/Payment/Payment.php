@@ -6,6 +6,7 @@ use Payment\Gateway\GatewayInterface;
 use Payment\Gateway\Mellat\Mellat;
 use Payment\Gateway\Saman\Saman;
 use Payment\Gateway\Parsian\Parsian;
+use Payment\Gateway\Zarinpal\Zarinpal;
 
 class Payment
 {
@@ -27,6 +28,9 @@ class Payment
 
 			case 'Parsian':
 				static::$gateway = new Parsian($params);
+				break;
+			case 'Zarinpal':
+				static::$gateway = new Zarinpal($params);
 				break;
 
 			default:

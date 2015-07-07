@@ -41,7 +41,7 @@ class Gateway
 
 
 
-	protected function redirectByPostMethod($url, array $getParams, array $postParams)
+	protected function redirectByPostMethod($url, array $getParams = [], array $postParams = [])
 	{
 		$elements = '';
 
@@ -57,7 +57,7 @@ class Gateway
 
 
 
-	protected function redirectByGetMethod($url, array $getParams)
+	protected function redirectByGetMethod($url, array $getParams = [])
 	{
 		$elements = '';
 

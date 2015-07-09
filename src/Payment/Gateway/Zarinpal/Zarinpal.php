@@ -47,7 +47,7 @@ class Zarinpal extends Gateway implements GatewayInterface
 	{
 		$params = [
 			'MerchantID'  => (string)$this->terminalId,
-			'Amount'      => $amount/10 + 0,
+			'Amount'      => $amount / 10,
 			'Description' => '-',
 			'Email'       => '',
 			'Mobile'      => '',

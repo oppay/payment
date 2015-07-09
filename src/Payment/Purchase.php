@@ -17,7 +17,7 @@ class Purchase
 
 
 
-	public function __construct($amount, $orderId, GatewayInterface $gateway)
+	public function __construct($amount, $orderId, $description, GatewayInterface $gateway)
 	{
 		$this->amount  = (int)$amount;
 		$this->orderId = $orderId;

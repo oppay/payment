@@ -7,6 +7,7 @@ use Payment\Gateway\Mellat\Mellat;
 use Payment\Gateway\Saman\Saman;
 use Payment\Gateway\Parsian\Parsian;
 use Payment\Gateway\Zarinpal\Zarinpal;
+use Payment\Gateway\Jahanpay\Jahanpay;
 
 class Payment
 {
@@ -32,6 +33,9 @@ class Payment
 			case 'Zarinpal':
 				static::$gateway = new Zarinpal($params);
 				break;
+			case 'Jahanpay':
+				static::$gateway = new Jahanpay($params);
+				break;
 
 			default:
 				throw new \InvalidArgumentException();
@@ -44,7 +48,7 @@ class Payment
 
 	public function purchase($amount, $orderId)
 	{
-		$purchase = new Purchase($amount, $orderId, static::$gateway);
+		$purchase = new Purchase($amount, $orderId, '',  static::$gateway);
 
 		return $purchase;
 	}

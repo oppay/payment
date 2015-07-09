@@ -43,12 +43,21 @@ class Gateway
 
 	protected function redirectByPostMethod($url, array $getParams = [], array $postParams = [])
 	{
+		$queries = [];
+
+		foreach ($getParams as $name => $value)
+		{
+			$queries[] = $value .'='. $name;
+		}
+
 		$elements = '';
 
 		foreach ($postParams as $name => $value)
 		{
 			$elements .= "<input type=\"hidden\" value=\"{$value}\" name=\"{$name}\" />";
 		}
+
+		$url = $queries ? $url .'?'. implode('&', $queries) : $url;
 
 		$method = 'POST';
 

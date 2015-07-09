@@ -6,8 +6,6 @@ use Payment\Gateway\GatewayInterface;
 use Payment\Gateway\Mellat\Mellat;
 use Payment\Gateway\Saman\Saman;
 use Payment\Gateway\Parsian\Parsian;
-use Payment\Gateway\Zarinpal\Zarinpal;
-use Payment\Gateway\Jahanpay\Jahanpay;
 
 class Payment
 {
@@ -19,22 +17,16 @@ class Payment
 	{
 		switch ($name)
 		{
-			case 'Saman':
-				static::$gateway = new Saman($params);
-				break;
-
 			case 'Mellat':
 				static::$gateway = new Mellat($params);
 				break;
 
+			case 'Saman':
+				static::$gateway = new Saman($params);
+				break;
+
 			case 'Parsian':
 				static::$gateway = new Parsian($params);
-				break;
-			case 'Zarinpal':
-				static::$gateway = new Zarinpal($params);
-				break;
-			case 'Jahanpay':
-				static::$gateway = new Jahanpay($params);
 				break;
 
 			default:
@@ -46,9 +38,9 @@ class Payment
 
 
 
-	public function purchase($amount, $orderId)
+	public function purchase($amount, $orderId, $description = '')
 	{
-		$purchase = new Purchase($amount, $orderId, '',  static::$gateway);
+		$purchase = new Purchase($amount, $orderId, $description,  static::$gateway);
 
 		return $purchase;
 	}

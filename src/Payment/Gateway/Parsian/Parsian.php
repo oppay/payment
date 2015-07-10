@@ -36,7 +36,7 @@ class Parsian extends Gateway implements GatewayInterface
 
 
 
-	public function send($amount, $receiptId)
+	public function send($amount, $receiptId, $description = '')
 	{
 		$params = [
 			'pin'         => (string)$this->terminalId,

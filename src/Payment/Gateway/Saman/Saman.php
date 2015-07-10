@@ -70,12 +70,13 @@ class Saman extends Gateway implements GatewayInterface
 
 
 
-	public function send($amount, $receiptId)
+	public function send($amount, $receiptId, $description = '')
 	{
 		$params = [
 			'TermID'          => (string)$this->terminalId,
 			'ResNum'          => (string)$receiptId,
 			'TotalAmount'     => $amount + 0,
+			'AdditionalData1' => (string)$description,
 		];
 
 		$result = $this->client()->__soapCall('RequestToken', $params);

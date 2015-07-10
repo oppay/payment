@@ -19,16 +19,18 @@ class Purchase
 
 	public function __construct($amount, $orderId, $description, GatewayInterface $gateway)
 	{
-		$this->amount  = (int)$amount;
-		$this->orderId = $orderId;
-		$this->gateway = $gateway;
+		$this->amount       = (int)$amount;
+		$this->orderId      = $orderId;
+		$this->$description = $$description;
+		
+		$this->gateway      = $gateway;
 	}
 
 
 
 	public function send()
 	{
-		return $this->gateway->send($this->amount, $this->orderId);
+		return $this->gateway->send($this->amount, $this->orderId, $this->$description);
 	}
 
 

@@ -83,7 +83,7 @@ class Mellat extends Gateway implements GatewayInterface
 
 
 
-	public function send($amount, $receiptId)
+	public function send($amount, $receiptId, $description = '')
 	{
 		$params = [
 			'terminalId'     => $this->terminalId + 0,
@@ -93,7 +93,7 @@ class Mellat extends Gateway implements GatewayInterface
 			'amount'         => $amount + 0,
 			'localDate'      => date('Ymd'),
 			'localTime'      => date('His'),
-			'additionalData' => '',
+			'additionalData' => $description,
 			'callBackUrl'    => $this->callbackUrl,
 			'payerId'        => 0,
 		];

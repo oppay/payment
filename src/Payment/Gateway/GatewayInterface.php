@@ -4,7 +4,7 @@ namespace Payment\Gateway;
 
 interface GatewayInterface
 {
-	public function send($amount, $receiptId);
+	public function send($amount, $receiptId, $description);
 
 	public function redirect();
 

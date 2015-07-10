@@ -87,13 +87,13 @@ class Mellat extends Gateway implements GatewayInterface
 	{
 		$params = [
 			'terminalId'     => $this->terminalId + 0,
-			'userName'       => $this->userName,
-			'userPassword'   => $this->userPassword,
+			'userName'       => (string)$this->userName,
+			'userPassword'   => (string)$this->userPassword,
 			'orderId'        => $receiptId + 0,
 			'amount'         => $amount + 0,
 			'localDate'      => date('Ymd'),
 			'localTime'      => date('His'),
-			'additionalData' => $description,
+			'additionalData' => (string)$description,
 			'callBackUrl'    => $this->callbackUrl,
 			'payerId'        => 0,
 		];

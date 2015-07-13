@@ -21,7 +21,7 @@ class Purchase
 	{
 		$this->amount       = (int)$amount;
 		$this->orderId      = $orderId;
-		$this->$description = $$description;
+		$this->description = $description;
 		
 		$this->gateway      = $gateway;
 	}
@@ -30,7 +30,7 @@ class Purchase
 
 	public function send()
 	{
-		return $this->gateway->send($this->amount, $this->orderId, $this->$description);
+		return $this->gateway->send($this->amount, $this->orderId, $this->description);
 	}
 
 
